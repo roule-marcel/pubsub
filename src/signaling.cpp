@@ -19,6 +19,13 @@
 
 int ddbus_fd = -1;
 
+void on_publish(const char* from, const char* channel) {
+	Channel* c = get_channel(channel);
+	if(!c) return;
+	if(c->state != STATE_REQUESTED) return;
+	c->on_publish(from);
+}
+
 void on_local_offer(const char* channel, const char* spec) {
 	Channel* c = get_channel(channel);
 	if(!c) return;
@@ -66,7 +73,10 @@ void broadcast(const char* fmt, ...) {
 
 
 void on_ddbus_message(const char* from, const char* what, const char* content) {
-	if(!strcmp(what, "LOCAL_OFFER")) {
+	if(!strcmp(what, "PUBLISH")) {
+		char* channel = (char*)content;
+		on_publish(from, channel);
+	} else if(!strcmp(what, "LOCAL_OFFER")) {
 		if(strcmp(from, "localhost")) return;
 		char* channel = (char*)content;
 		char* spec = strchr(channel, '=');

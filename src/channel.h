@@ -150,6 +150,10 @@ public:
 		connect();
 	}
 
+	void on_publish(const char* from) {
+		request();
+	}
+
 	void on_request(const char* host);
 
 	void on_info(const char* what, const char* value) {
