@@ -74,7 +74,7 @@ public:
 
 	void write(const char* buf, size_t len) {
 		set_size(len);
-		memcpy(ptr, buf, len);
+		if(buf!=ptr) memcpy(ptr, buf, len);
 		for(int i=0; i<connections.size(); i++) connections[i]->write();
 	}
 

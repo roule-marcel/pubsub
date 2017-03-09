@@ -1,7 +1,7 @@
 SOURCES:=$(shell find src/ -maxdepth 1 -type f -name '*.cpp')
 OBJECTS:=$(SOURCES:src/%.cpp=bin/%.o)
 
-all: libpubsub.so publish subscribe subscribe-async
+all: libpubsub.so publish subscribe subscribe-async monitor-in monitor-out
 
 install:
 	cp publish /usr/bin
@@ -15,6 +15,12 @@ publish: bin/test/publish.o
 	g++ -g  -o $@ $^ -pthread -lpubsub -L.
 
 subscribe: bin/test/subscribe.o
+	g++ -g  -o $@ $^ -pthread -lpubsub -L.
+
+monitor-in: bin/test/monitor-in.o
+	g++ -g  -o $@ $^ -pthread -lpubsub -L.
+
+monitor-out: bin/test/monitor-out.o
 	g++ -g  -o $@ $^ -pthread -lpubsub -L.
 
 subscribe-async: bin/test/subscribe-async.o
