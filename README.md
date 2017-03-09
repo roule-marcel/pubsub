@@ -61,4 +61,5 @@ int main(int argc, char **argv) {
 
 # Configuration
 
-pubsub
+pubsub uses [ddbus](https://github.com/roule-marcel/ddbus) as its signaling backend. To operate remotely, ddbus rely on a broadcast network defined in `/etc/ddbus/broadcast`. For example if you put `192.168.255.255` in this file, your channels will be visible to the whole 192.168.*.* network. Don't forget to call `ddbusd restart` after changing the broadcast network
+
