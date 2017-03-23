@@ -13,6 +13,8 @@
 #include "channel.h"
 
 
+int DDBUS_DBG_LEVEL = 0;
+
 Channel* request(const char* channel) {
 	Channel* c = get_channel(channel);
 	if(!c) {
@@ -52,6 +54,7 @@ Subscription* subscribe(const char* channel, void (*on_recv)(const char* buf, si
 	Subscription* s = c->subscribe(on_recv);
 	return s;
 }
+
 
 #ifdef __cplusplus
 }

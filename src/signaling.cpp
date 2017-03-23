@@ -17,6 +17,10 @@
 
 #include "channel.h"
 
+const char* bus = "pubsub";
+
+extern int DDBUS_DBG_LEVEL;
+
 int ddbus_fd = -1;
 
 void on_publish(const char* from, const char* channel) {
@@ -66,13 +70,14 @@ void broadcast(const char* fmt, ...) {
 	va_start(vl,fmt);
 	vsprintf(s, fmt, vl);
 	va_end(vl);
-	write(ddbus_fd, s, strlen(s));
+ 	ddbus_write(ddbus_fd, s);
 	fsync(ddbus_fd);
-//	printf("-> %s", s);
+	if(DDBUS_DBG_LEVEL) printf("-> %s", s);
 }
 
 
 void on_ddbus_message(const char* from, const char* what, const char* content) {
+	if(DDBUS_DBG_LEVEL) printf("<- %s : %s : %s\n", from, what, content);
 	if(!strcmp(what, "PUBLISH")) {
 		char* channel = (char*)content;
 		on_publish(from, channel);
@@ -99,12 +104,9 @@ void on_ddbus_message(const char* from, const char* what, const char* content) {
 	}
 }
 
-void on_ddbus_message(const char* msg) {
-//	printf("<- %s\n", msg);
-	char* from = (char*) &msg[1];
-	char* what = strchr(from, ']');
-	if(!what) return;
-	*what = 0; what+=2;
+static void on_ddbus_message(const char* from, const char* msg) {
+	if(!from || !msg || !*msg) return;
+	char* what = (char*)msg;
 	char* content = strchr(what, ':');
 	if(content) { *content = 0; content++; }
 	on_ddbus_message(from, what, content);
@@ -118,5 +120,5 @@ static bool bInited = false;
 void pubsub_init() {
 	if(bInited) return;
 	bInited = true;
-	ddbus_fd = ddbus_open(on_ddbus_message);
+	ddbus_fd = ddbus_open(bus, on_ddbus_message);
 }

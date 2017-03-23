@@ -19,6 +19,9 @@ Channel* publish(const char* channel, void (*on_recv)(const char* buf, size_t le
 
 Subscription* subscribe(const char* channel, void (*on_recv)(const char* buf, size_t len) = 0);
 
+
+extern int DDBUS_DBG_LEVEL;
+
 #ifdef __cplusplus
 }
 #endif
